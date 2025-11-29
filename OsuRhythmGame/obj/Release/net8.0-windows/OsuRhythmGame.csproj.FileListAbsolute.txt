@@ -1,0 +1,14 @@
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\bin\Release\net8.0-windows\OsuRhythmGame.exe
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\bin\Release\net8.0-windows\OsuRhythmGame.deps.json
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\bin\Release\net8.0-windows\OsuRhythmGame.runtimeconfig.json
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\bin\Release\net8.0-windows\OsuRhythmGame.dll
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\bin\Release\net8.0-windows\OsuRhythmGame.pdb
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\obj\Release\net8.0-windows\OsuRhythmGame.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\obj\Release\net8.0-windows\OsuRhythmGame.AssemblyInfoInputs.cache
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\obj\Release\net8.0-windows\OsuRhythmGame.AssemblyInfo.cs
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\obj\Release\net8.0-windows\OsuRhythmGame.csproj.CoreCompileInputs.cache
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\obj\Release\net8.0-windows\OsuRhythmGame.dll
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\obj\Release\net8.0-windows\refint\OsuRhythmGame.dll
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\obj\Release\net8.0-windows\OsuRhythmGame.pdb
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\obj\Release\net8.0-windows\OsuRhythmGame.genruntimeconfig.cache
+C:\Users\sanik\Documents\c#_test\first_c#\OsuRhythmGame\obj\Release\net8.0-windows\ref\OsuRhythmGame.dll

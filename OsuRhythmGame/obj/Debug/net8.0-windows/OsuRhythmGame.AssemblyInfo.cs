@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OsuRhythmGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6745c12654492d2f2b08b4cdeb7308dd4ee9f718")]
 [assembly: System.Reflection.AssemblyProductAttribute("OsuRhythmGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OsuRhythmGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

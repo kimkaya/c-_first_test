@@ -5,6 +5,8 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Linq;
+using System.IO;
+using NAudio.Wave;
 
 namespace OsuRhythmGame
 {
@@ -17,6 +19,10 @@ namespace OsuRhythmGame
         private bool isPlaying = false;
         private Stopwatch gameTimer;
         private float songStartTime = 0f;
+
+        // 음악 재생
+        private IWavePlayer? wavePlayer;
+        private AudioFileReader? audioFileReader;
 
         // 게임 오브젝트
         private Beatmap? currentBeatmap;
@@ -38,8 +44,8 @@ namespace OsuRhythmGame
         private Button startButton;
         private Panel gamePanel;
 
-        // 게임 설정
-        private const float PREEMPT_TIME = 1.5f; // 노트가 미리 나타나는 시간
+        // 게임 설정 (난이도 쉬움)
+        private const float PREEMPT_TIME = 2.5f; // 노트가 미리 나타나는 시간 (더 길게 - 쉬움)
 
         public GameForm()
         {
@@ -123,10 +129,12 @@ namespace OsuRhythmGame
                 Size = new Size(200, 50),
                 Font = new Font("Arial", 16, FontStyle.Bold),
                 Text = "Start Game",
-                BackColor = Color.FromArgb(100, 100, 255),
+                BackColor = Color.FromArgb(150, 100, 200),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
             };
+            startButton.FlatAppearance.BorderColor = Color.FromArgb(200, 150, 255);
+            startButton.FlatAppearance.BorderSize = 2;
             startButton.Click += StartButton_Click;
             gamePanel.Controls.Add(startButton);
 
@@ -186,11 +194,64 @@ namespace OsuRhythmGame
             remainingNotes = remainingNotes.OrderBy(n => n.Time).ToList();
             scoreManager.Reset();
 
+            // 음악 재생
+            PlayMusic();
+
             // 타이머 시작
             gameTimer.Restart();
             renderTimer.Start();
 
             UpdateScoreUI();
+        }
+
+        private void PlayMusic()
+        {
+            try
+            {
+                // 기존 음악 정리
+                StopMusic();
+
+                // Music 폴더에서 음악 파일 찾기
+                string musicFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Music");
+                if (Directory.Exists(musicFolder))
+                {
+                    string[] musicFiles = Directory.GetFiles(musicFolder, "*.*")
+                        .Where(file => file.ToLower().EndsWith(".mp3") ||
+                                      file.ToLower().EndsWith(".wav") ||
+                                      file.ToLower().EndsWith(".ogg"))
+                        .ToArray();
+
+                    if (musicFiles.Length > 0)
+                    {
+                        // 첫 번째 음악 파일 재생
+                        audioFileReader = new AudioFileReader(musicFiles[0]);
+                        wavePlayer = new WaveOutEvent();
+                        wavePlayer.Init(audioFileReader);
+                        wavePlayer.Play();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 음악 재생 실패해도 게임은 계속 진행
+                Debug.WriteLine($"음악 재생 오류: {ex.Message}");
+            }
+        }
+
+        private void StopMusic()
+        {
+            try
+            {
+                wavePlayer?.Stop();
+                wavePlayer?.Dispose();
+                audioFileReader?.Dispose();
+                wavePlayer = null;
+                audioFileReader = null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"음악 정지 오류: {ex.Message}");
+            }
         }
 
         private void RenderTimer_Tick(object? sender, EventArgs e)
@@ -251,8 +312,8 @@ namespace OsuRhythmGame
             {
                 float timeUntilHit = hitObject.HitTime - currentTime;
 
-                // 미스 판정 (히트 시간을 너무 지나침)
-                if (!hitObject.IsHit && timeUntilHit < -0.15f)
+                // 미스 판정 (히트 시간을 너무 지나침) - 더 관대하게
+                if (!hitObject.IsHit && timeUntilHit < -0.35f)  // 기존: -0.15f
                 {
                     scoreManager.AddHit(HitResult.Miss);
                     notesToRemove.Add(hitObject);
@@ -270,7 +331,18 @@ namespace OsuRhythmGame
             if (bufferedGraphics == null) return;
 
             Graphics g = bufferedGraphics.Graphics;
-            g.Clear(gamePanel.BackColor);
+
+            // 그라데이션 배경 그리기
+            using (System.Drawing.Drawing2D.LinearGradientBrush bgBrush =
+                new System.Drawing.Drawing2D.LinearGradientBrush(
+                    gamePanel.ClientRectangle,
+                    Color.FromArgb(15, 15, 35),
+                    Color.FromArgb(40, 20, 60),
+                    System.Drawing.Drawing2D.LinearGradientMode.Vertical))
+            {
+                g.FillRectangle(bgBrush, gamePanel.ClientRectangle);
+            }
+
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
             if (isPlaying)
@@ -410,6 +482,7 @@ namespace OsuRhythmGame
             isPlaying = false;
             renderTimer.Stop();
             gameTimer.Stop();
+            wavePlayer?.Pause();
 
             MessageBox.Show("일시정지\n\nR 키를 눌러 재시작하세요.", "일시정지");
         }
@@ -419,6 +492,7 @@ namespace OsuRhythmGame
             isPlaying = false;
             renderTimer.Stop();
             gameTimer.Stop();
+            StopMusic();
 
             string result = $"게임 종료!\n\n" +
                           $"최종 점수: {scoreManager.Score:N0}\n" +
@@ -435,6 +509,7 @@ namespace OsuRhythmGame
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             renderTimer.Stop();
+            StopMusic();
             bufferedGraphics?.Dispose();
             graphicsContext?.Dispose();
             base.OnFormClosing(e);
